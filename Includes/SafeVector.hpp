@@ -4,123 +4,92 @@
 #include <vector>
 #include <mutex>
 
-template<typename T>
-class SafeVector
-{
-private:
-    std::vector<T> _vector;
-    std::mutex _mutex;
+namespace SafeSTL {
+    template<typename T>
+    class SafeVector {
+    private:
+        std::vector<T> _vector;
+        std::mutex _mutex;
 
-public:
-    SafeVector() = default;
+    public:
+        SafeVector() = default;
 
-    SafeVector(const SafeVector &sv) : _vector(std::move(sv._vector)) {}
+        SafeVector(const SafeVector &sv) : _vector(std::move(sv._vector)) {}
 
-    T &at(size_t n)
-    {
-        std::unique_lock<std::mutex> lock(_mutex);
-        return _vector.at(n);
-    }
+        T &at(size_t n) {
+            std::unique_lock<std::mutex> lock(_mutex);
+            return _vector.at(n);
+        }
 
-    auto begin()
-    {
-        std::unique_lock<std::mutex> lock(_mutex);
-        return _vector.begin();
-    }
+        auto begin() {
+            std::unique_lock<std::mutex> lock(_mutex);
+            return _vector.begin();
+        }
 
-    auto end()
-    {
-        std::unique_lock<std::mutex> lock(_mutex);
-        return _vector.end();
-    }
+        auto end() {
+            std::unique_lock<std::mutex> lock(_mutex);
+            return _vector.end();
+        }
 
-    const T &back()
-    {
-        std::unique_lock<std::mutex> lock(_mutex);
-        return _vector.back();
-    }
+        const T &back() {
+            std::unique_lock<std::mutex> lock(_mutex);
+            return _vector.back();
+        }
 
-    const T &front()
-    {
-        std::unique_lock<std::mutex> lock(_mutex);
-        return _vector.front();
-    }
+        const T &front() {
+            std::unique_lock<std::mutex> lock(_mutex);
+            return _vector.front();
+        }
 
-    bool empty()
-    {
-        std::unique_lock<std::mutex> lock(_mutex);
-        return _vector.empty();
-    }
+        bool empty() {
+            std::unique_lock<std::mutex> lock(_mutex);
+            return _vector.empty();
+        }
 
-    uint64_t size()
-    {
-        std::unique_lock<std::mutex> lock(_mutex);
-        return _vector.size();
-    }
+        uint64_t size() {
+            std::unique_lock<std::mutex> lock(_mutex);
+            return _vector.size();
+        }
 
-    template<typename SafeVectorIterator>
-    void emplace(SafeVectorIterator it, T &&t)
-    {
-        std::unique_lock<std::mutex> lock(_mutex);
-        _vector.emplace(it, t);
-    }
+        template<typename SafeVectorIterator>
+        void emplace(SafeVectorIterator it, T &&t) {
+            std::unique_lock<std::mutex> lock(_mutex);
+            _vector.emplace(it, t);
+        }
 
-    void emplace_back(T &&t)
-    {
-        std::unique_lock<std::mutex> lock(_mutex);
-        _vector.emplace_back(t);
-    }
+        void emplace_back(T &&t) {
+            std::unique_lock<std::mutex> lock(_mutex);
+            _vector.emplace_back(t);
+        }
 
-    void emplace_front(T &&t)
-    {
-        std::unique_lock<std::mutex> lock(_mutex);
-        _vector.emplace_front(t);
-    }
+        template<typename SafeVectorIterator>
+        auto erase(SafeVectorIterator it) {
+            std::unique_lock<std::mutex> lock(_mutex);
+            _vector.erase(it);
+        }
 
-    template<typename SafeVectorIterator>
-    auto erase(SafeVectorIterator it)
-    {
-        std::unique_lock<std::mutex> lock(_mutex);
-        _vector.erase(it);
-    }
+        void pop_back(T &&t) {
+            std::unique_lock<std::mutex> lock(_mutex);
+            _vector.pop_back();
+        }
 
-    void pop_back(T &&t)
-    {
-        std::unique_lock<std::mutex> lock(_mutex);
-        _vector.pop_back();
-    }
+        void push_back(T &&t) {
+            std::unique_lock<std::mutex> lock(_mutex);
+            _vector.push_back(t);
+        }
 
-    void pop_front(T &&t)
-    {
-        std::unique_lock<std::mutex> lock(_mutex);
-        _vector.pop_front();
-    }
+        bool clear() {
+            std::unique_lock<std::mutex> lock(_mutex);
+            _vector.clear();
+        }
 
-    void push_back(T &&t)
-    {
-        std::unique_lock<std::mutex> lock(_mutex);
-        _vector.push_back(t);
-    }
-
-    void push_front(T &&t)
-    {
-        std::unique_lock<std::mutex> lock(_mutex);
-        _vector.push_front(t);
-    }
-
-    bool clear()
-    {
-        std::unique_lock<std::mutex> lock(_mutex);
-        _vector.clear();
-    }
-
-    bool reserve(unsigned long n)
-    {
-        std::unique_lock<std::mutex> lock(_mutex);
-        _vector.reserve(n);
-    }
+        bool reserve(unsigned long n) {
+            std::unique_lock<std::mutex> lock(_mutex);
+            _vector.reserve(n);
+        }
 
 
-};
+    };
+}
 
 #endif
